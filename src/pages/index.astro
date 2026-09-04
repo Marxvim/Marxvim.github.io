@@ -4,7 +4,7 @@ import Lattice from '../components/Lattice.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 
 const title = 'Marxvim — Systems';
-const description = 'Directory for Marxvim systems: site, console, n8n, Langfuse, and GitHub.';
+const description = 'Directory for Marxvim systems.';
 
 const destinations = [
   {
@@ -37,6 +37,18 @@ const destinations = [
     href: 'https://github.com/marxvim',
     icon: 'github',
   },
+  {
+    label: 'Node Enterprise',
+    hint: 'app.nodeenterprise.ai',
+    href: 'https://app.nodeenterprise.ai/',
+    icon: 'node',
+  },
+  {
+    label: 'Fortify Risk',
+    hint: 'fortifyriskai-lp-app.vercel.app',
+    href: 'https://fortifyriskai-lp-app.vercel.app/',
+    icon: 'fortify',
+  },
 ] as const;
 ---
 
@@ -46,19 +58,37 @@ const destinations = [
 
   <main class="gate">
     <div class="gate__lead rise rise--1">
-      <h1 class="visually-hidden">Marxvim systems</h1>
-      <p class="eyebrow">Select a system</p>
+      <div>
+        <h1 class="visually-hidden">Marxvim systems</h1>
+        <p class="eyebrow">Select a system</p>
+      </div>
+
+      <label class="finder">
+        <span class="finder__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none">
+            <circle cx="10.5" cy="10.5" r="6" stroke="currentColor" stroke-width="1.6"></circle>
+            <path d="M15.2 15.2L20 20" stroke="currentColor" stroke-width="1.6"></path>
+          </svg>
+        </span>
+        <input
+          class="finder__input"
+          type="search"
+          placeholder="Search systems"
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </label>
     </div>
 
-    <nav class="sys-grid" aria-label="Marxvim systems">
+    <nav class="sys-rail" aria-label="Marxvim systems">
       {
         destinations.map((item, i) => (
           <a
-            class={`sys-tile rise rise--${i + 2}`}
+            class="sys-tile rise"
             href={item.href}
             rel="noopener"
             style={`--i:${i}`}
-            data-slot={i}
+            data-search={`${item.label} ${item.hint} ${item.href}`.toLowerCase()}
           >
             <span class={`glass glass--${item.icon}`} aria-hidden="true">
               <span class="glass__plate">
@@ -104,6 +134,23 @@ const destinations = [
                       <path d="M24 6C14.1 6 6 14.2 6 24.2c0 8 5.2 14.8 12.4 17.2.9.2 1.2-.4 1.2-.9v-3.3c-5 .1-6.1-2.4-6.1-2.4-.8-2.1-2-2.7-2-2.7-1.6-1.1.1-1.1.1-1.1 1.8.1 2.8 1.9 2.8 1.9 1.6 2.8 4.2 2 5.2 1.5.2-1.2.6-2 .1-2.5-4-.5-8.2-2-8.2-9 0-2 .7-3.6 1.8-4.9-.2-.5-.8-2.3.2-4.7 0 0 1.5-.5 5 1.9 1.4-.4 3-.6 4.6-.6s3.2.2 4.6.6c3.5-2.4 5-1.9 5-1.9 1 2.4.4 4.2.2 4.7 1.1 1.3 1.8 2.9 1.8 4.9 0 7-4.2 8.5-8.2 9 .7.6 1.3 1.8 1.3 3.6v5.3c0 .5.3 1.1 1.2.9C36.8 39 42 32.2 42 24.2 42 14.2 33.9 6 24 6z" />
                     </svg>
                   )}
+                  {item.icon === 'node' && (
+                    <svg viewBox="0 0 48 48" fill="none">
+                      <path class="edge" d="M18 18.5L24 13M30 18.5L24 13M18 29.5L24 35M30 29.5L24 35M16.5 22L16.5 26M31.5 22L31.5 26" />
+                      <circle class="node n1" cx="16" cy="20" r="4" />
+                      <circle class="node n2" cx="32" cy="20" r="4" />
+                      <circle class="node n3" cx="16" cy="28" r="4" />
+                      <circle class="node n4" cx="32" cy="28" r="4" />
+                      <circle class="node n5" cx="24" cy="12" r="3.4" />
+                      <circle class="node n6" cx="24" cy="36" r="3.4" />
+                    </svg>
+                  )}
+                  {item.icon === 'fortify' && (
+                    <svg viewBox="0 0 48 48" fill="none">
+                      <path class="shield" d="M24 8l14 6v10c0 9.2-6.2 14.8-14 17-7.8-2.2-14-7.8-14-17V14z" />
+                      <path class="check" d="M17 24l5 5 9-10" />
+                    </svg>
+                  )}
                 </span>
               </span>
             </span>
@@ -112,9 +159,64 @@ const destinations = [
           </a>
         ))
       }
+      <p class="sys-empty" hidden>No systems match.</p>
     </nav>
   </main>
 </Layout>
+
+<script>
+  const rail = document.querySelector('.sys-rail');
+  const input = document.querySelector('.finder__input');
+  const tiles = [...document.querySelectorAll('.sys-tile')];
+  const empty = document.querySelector('.sys-empty');
+
+  if (rail instanceof HTMLElement) {
+    rail.addEventListener(
+      'wheel',
+      (event) => {
+        if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+        event.preventDefault();
+        rail.scrollLeft += event.deltaY;
+      },
+      { passive: false },
+    );
+  }
+
+  if (input instanceof HTMLInputElement && empty instanceof HTMLElement) {
+    const filter = () => {
+      const query = input.value.trim().toLowerCase();
+      let shown = 0;
+      for (const tile of tiles) {
+        if (!(tile instanceof HTMLElement)) continue;
+        const hay = tile.dataset.search ?? '';
+        const match = query.length === 0 || hay.includes(query);
+        tile.hidden = !match;
+        if (match) shown += 1;
+      }
+      empty.hidden = shown > 0;
+    };
+
+    input.addEventListener('input', filter);
+    window.addEventListener('keydown', (event) => {
+      if (event.key === '/' && document.activeElement !== input) {
+        event.preventDefault();
+        input.focus();
+      }
+      if (event.key === 'Escape' && document.activeElement === input) {
+        input.value = '';
+        filter();
+        input.blur();
+      }
+    });
+  }
+</script>
+
+<style is:global>
+  html,
+  body {
+    overflow-y: hidden;
+  }
+</style>
 
 <style>
   .gate {
@@ -123,11 +225,17 @@ const destinations = [
     min-height: 100vh;
     min-height: 100svh;
     display: grid;
-    grid-template-rows: auto 1fr;
-    gap: 22px;
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 104px var(--gutter) 36px;
+    align-content: center;
+    gap: 28px;
+    padding: 110px 0 48px;
+  }
+
+  .gate__lead {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 0 var(--gutter);
   }
 
   .eyebrow {
@@ -139,40 +247,100 @@ const destinations = [
     color: var(--accent);
   }
 
-  .sys-grid {
+  .finder {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: min(320px, 52vw);
+    padding: 0 14px;
+    border: 1px solid rgba(232, 236, 238, 0.18);
+    background: rgba(5, 6, 7, 0.55);
+    color: rgba(232, 236, 238, 0.55);
+    backdrop-filter: blur(14px);
+  }
+
+  .finder:focus-within {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .finder__icon {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    grid-template-rows: 1fr 1fr;
+  }
+
+  .finder__input {
+    flex: 1;
+    min-width: 0;
+    height: 42px;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    outline: none;
+  }
+
+  .finder__input::placeholder {
+    color: rgba(232, 236, 238, 0.38);
+    text-transform: uppercase;
+  }
+
+  .sys-rail {
+    display: flex;
+    align-items: stretch;
     gap: 1px;
-    min-height: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
     background: var(--rule);
-    border: 1px solid var(--rule);
+    border-block: 1px solid var(--rule);
+    padding-inline: var(--gutter);
+    scrollbar-color: rgba(34, 211, 238, 0.45) transparent;
+    scrollbar-width: thin;
+  }
+
+  .sys-rail::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .sys-rail::-webkit-scrollbar-thumb {
+    background: rgba(34, 211, 238, 0.4);
+  }
+
+  .sys-empty {
+    margin: 0;
+    padding: 48px 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(232, 236, 238, 0.42);
+    white-space: nowrap;
   }
 
   .sys-tile {
     position: relative;
     isolation: isolate;
-    grid-column: span 2;
+    flex: 0 0 228px;
     display: grid;
     justify-items: start;
     align-content: end;
-    gap: 14px;
-    min-height: 0;
-    padding: 34px 32px;
+    gap: 10px;
+    height: 228px;
+    padding: 22px 20px;
     background: rgba(5, 6, 7, 0.42);
     color: var(--ink);
     overflow: hidden;
+    scroll-snap-align: start;
     transition:
       color 220ms ease,
       background-color 260ms ease;
   }
 
-  .sys-tile:nth-child(4) {
-    grid-column: 1 / span 3;
-  }
-
-  .sys-tile:nth-child(5) {
-    grid-column: 4 / span 3;
+  .sys-tile[hidden] {
+    display: none;
   }
 
   .sys-tile::after {
@@ -199,10 +367,10 @@ const destinations = [
 
   .glass {
     position: absolute;
-    top: 28px;
-    left: 32px;
-    width: 88px;
-    height: 88px;
+    top: 20px;
+    left: 20px;
+    width: 64px;
+    height: 64px;
     perspective: 320px;
   }
 
@@ -212,7 +380,7 @@ const destinations = [
     place-items: center;
     width: 100%;
     height: 100%;
-    border-radius: 26px;
+    border-radius: 20px;
     overflow: hidden;
     color: #e8fbff;
     background:
@@ -254,8 +422,8 @@ const destinations = [
   .glass__mark {
     position: relative;
     z-index: 1;
-    width: 46px;
-    height: 46px;
+    width: 34px;
+    height: 34px;
     color: rgba(232, 251, 255, 0.94);
     filter: drop-shadow(0 0 10px rgba(34, 211, 238, 0.35));
   }
@@ -270,7 +438,9 @@ const destinations = [
   .glass__mark .prompt,
   .glass__mark .edge,
   .glass__mark .node,
-  .glass__mark .bar {
+  .glass__mark .bar,
+  .glass__mark .shield,
+  .glass__mark .check {
     stroke: currentColor;
     stroke-width: 1.7;
   }
@@ -280,67 +450,37 @@ const destinations = [
   }
 
   .sys-tile__label {
-    font-size: clamp(22px, 2.4vw, 34px);
+    font-size: 22px;
     font-weight: 500;
     letter-spacing: -0.03em;
-    line-height: 1.05;
+    line-height: 1.1;
   }
 
   .sys-tile__hint {
     font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.16em;
+    font-size: 10px;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: rgba(232, 236, 238, 0.42);
-  }
-
-  @media (max-width: 900px) {
-    .sys-grid {
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: none;
-    }
-
-    .sys-tile,
-    .sys-tile:nth-child(4),
-    .sys-tile:nth-child(5) {
-      grid-column: auto;
-    }
-
-    .sys-tile:last-child {
-      grid-column: 1 / -1;
-    }
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
   }
 
   @media (max-width: 640px) {
-    .gate {
-      padding: 96px var(--gutter) 28px;
+    .gate__lead {
+      flex-direction: column;
+      align-items: stretch;
     }
 
-    .sys-grid {
-      grid-template-columns: 1fr;
+    .finder {
+      min-width: 0;
     }
 
-    .sys-tile,
-    .sys-tile:last-child {
-      grid-column: auto;
-      min-height: 148px;
-      padding: 22px 20px;
-    }
-
-    .glass {
-      top: 18px;
-      left: 18px;
-      width: 64px;
-      height: 64px;
-    }
-
-    .glass__plate {
-      border-radius: 20px;
-    }
-
-    .glass__mark {
-      width: 34px;
-      height: 34px;
+    .sys-tile {
+      flex-basis: 200px;
+      height: 208px;
     }
   }
 
@@ -349,23 +489,8 @@ const destinations = [
       animation: rise 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
     }
 
-    .rise--1 {
-      animation-delay: 80ms;
-    }
-    .rise--2 {
-      animation-delay: 140ms;
-    }
-    .rise--3 {
-      animation-delay: 220ms;
-    }
-    .rise--4 {
-      animation-delay: 300ms;
-    }
-    .rise--5 {
-      animation-delay: 380ms;
-    }
-    .rise--6 {
-      animation-delay: 460ms;
+    .sys-tile.rise {
+      animation-delay: calc(120ms + var(--i) * 70ms);
     }
 
     .glass__plate {
@@ -404,23 +529,34 @@ const destinations = [
       animation: prompt-type 2.4s ease-in-out infinite;
     }
 
-    .glass--n8n .node {
+    .glass--n8n .node,
+    .glass--node .node {
       transform-box: fill-box;
       transform-origin: center;
       animation: node-pulse 2.2s ease-in-out infinite;
     }
 
-    .glass--n8n .n2 {
+    .glass--n8n .n2,
+    .glass--node .n2 {
       animation-delay: 0.2s;
     }
-    .glass--n8n .n3 {
+    .glass--n8n .n3,
+    .glass--node .n3 {
       animation-delay: 0.4s;
     }
-    .glass--n8n .n4 {
+    .glass--n8n .n4,
+    .glass--node .n4 {
       animation-delay: 0.6s;
     }
+    .glass--node .n5 {
+      animation-delay: 0.3s;
+    }
+    .glass--node .n6 {
+      animation-delay: 0.5s;
+    }
 
-    .glass--n8n .edge {
+    .glass--n8n .edge,
+    .glass--node .edge {
       stroke-dasharray: 8 6;
       animation: edge-flow 1.6s linear infinite;
     }
@@ -458,6 +594,17 @@ const destinations = [
 
     .glass--github .octo {
       animation: octo-breathe 3.2s ease-in-out infinite;
+    }
+
+    .glass--fortify .shield {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: shield-pulse 2.6s ease-in-out infinite;
+    }
+
+    .glass--fortify .check {
+      stroke-dasharray: 28;
+      animation: prompt-type 2.2s ease-in-out infinite;
     }
   }
 
@@ -556,6 +703,12 @@ const destinations = [
     50% {
       transform: scale(1.06);
       filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.45));
+    }
+  }
+
+  @keyframes shield-pulse {
+    50% {
+      transform: scale(1.06);
     }
   }
 
