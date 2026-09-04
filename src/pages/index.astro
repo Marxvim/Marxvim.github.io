@@ -1,0 +1,413 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Lattice from '../components/Lattice.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import ScrollProgress from '../components/ScrollProgress.astro';
+
+const title = 'Marxvim — Advanced research, built in public.';
+const description =
+  'Marxvim is an independent lab working at the boundary between quantum computation and machine learning. Small team, long horizon, open results.';
+
+const work = [
+  {
+    index: '01',
+    title: 'Quantum algorithms',
+    body: 'Variational and error-corrected methods for problems classical hardware handles badly.',
+  },
+  {
+    index: '02',
+    title: 'Learning systems',
+    body: 'Model architectures and training regimes that assume quantum resources are part of the stack.',
+  },
+  {
+    index: '03',
+    title: 'Compilation',
+    body: 'Hardware-aware toolchains that turn those algorithms into circuits that actually run.',
+  },
+];
+---
+
+<Layout title={title} description={description}>
+  <Lattice />
+  <ScrollProgress />
+  <SiteHeader />
+
+  <main>
+    <section class="section section--hero" id="hero">
+      <p class="eyebrow rise rise--1">Quantum &amp; machine intelligence</p>
+      <h1 class="hero__title rise rise--2">Advanced<br />research,<br />built in public.</h1>
+      <p class="hero__lede rise rise--3">{description}</p>
+
+      <a class="scroll-cue rise rise--4" href="#work">
+        <span class="scroll-cue__label">Scroll</span>
+        <span class="scroll-cue__rail" aria-hidden="true"></span>
+      </a>
+    </section>
+
+    <section class="section section--work" id="work">
+      <h2 class="visually-hidden">What we work on</h2>
+      <div class="cards">
+        {
+          work.map((item) => (
+            <article class="card reveal">
+              <span class="card__index">{item.index}</span>
+              <h3 class="card__title">{item.title}</h3>
+              <p class="card__body">{item.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="section section--links" id="links">
+      <p class="eyebrow eyebrow--muted reveal">Everything we make is here</p>
+
+      <nav class="links reveal" aria-label="Marxvim elsewhere">
+        <a class="link link--accent" href="https://github.com/marxvim" rel="me noopener">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path
+              d="M12 .5C5.7.5.9 5.3.9 11.6c0 4.9 3.2 9.1 7.6 10.5.6.1.8-.2.8-.6v-2c-3.1.7-3.8-1.5-3.8-1.5-.5-1.3-1.2-1.7-1.2-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.7 2.6 1.2 3.3.9.1-.7.4-1.2.7-1.5-2.5-.3-5.1-1.2-5.1-5.5 0-1.2.4-2.2 1.1-3-.1-.3-.5-1.4.1-2.9 0 0 .9-.3 3.1 1.1.9-.2 1.9-.4 2.8-.4.9 0 1.9.1 2.8.4 2.1-1.5 3.1-1.1 3.1-1.1.6 1.5.2 2.6.1 2.9.7.8 1.1 1.8 1.1 3 0 4.3-2.6 5.2-5.1 5.5.4.4.8 1.1.8 2.2v3.2c0 .4.2.7.8.6 4.4-1.5 7.6-5.6 7.6-10.5C23.1 5.3 18.3.5 12 .5z"
+            />
+          </svg>
+          GitHub
+        </a>
+
+        <a class="link" href="https://marxvim.com">
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            aria-hidden="true"
+          >
+            <path d="M5 4h9l5 5v11H5z" />
+            <path d="M9 12h6M9 16h6" />
+          </svg>
+          marxvim.com
+        </a>
+      </nav>
+
+      <p class="wordmark reveal">marxvim.com</p>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .section {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: grid;
+    align-content: center;
+    padding: 120px var(--gutter);
+    max-width: var(--measure);
+    margin: 0 auto;
+  }
+
+  .section--hero {
+    justify-items: start;
+  }
+
+  .section--links {
+    justify-items: center;
+    text-align: center;
+    max-width: none;
+  }
+
+  .eyebrow {
+    margin: 0 0 26px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .eyebrow--muted {
+    margin-bottom: 40px;
+    color: rgba(232, 236, 238, 0.45);
+  }
+
+  .hero__title {
+    margin: 0;
+    font-size: clamp(52px, 9vw, 132px);
+    font-weight: 500;
+    line-height: 0.94;
+    letter-spacing: -0.045em;
+    text-wrap: balance;
+    color: var(--ink-bright);
+  }
+
+  .hero__lede {
+    margin: 34px 0 0;
+    max-width: 46ch;
+    font-size: 19px;
+    line-height: 1.6;
+    color: rgba(232, 236, 238, 0.68);
+    text-wrap: pretty;
+  }
+
+  /* 1px grid gaps over a rule-coloured background draw the hairlines. */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  .card {
+    position: relative;
+    display: grid;
+    gap: 14px;
+    align-content: start;
+    padding: 34px 30px 40px;
+    background: var(--panel);
+    transition:
+      background-color 260ms ease,
+      box-shadow 260ms ease;
+  }
+
+  /* A single accent hairline that wipes across the top edge on hover. */
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .card:hover {
+    background-color: rgba(9, 15, 18, 0.86);
+    box-shadow: inset 0 0 60px rgba(34, 211, 238, 0.05);
+  }
+
+  .card:hover::after {
+    transform: scaleX(1);
+  }
+
+  .card:hover .card__index {
+    color: #67e8f9;
+  }
+
+  .card__index {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    transition: color 260ms ease;
+  }
+
+  .card__title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--ink-bright);
+  }
+
+  .card__body {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.65;
+    color: rgba(232, 236, 238, 0.6);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 18px;
+  }
+
+  .link {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 18px 26px;
+    border: 1px solid rgba(232, 236, 238, 0.2);
+    background: rgba(5, 6, 7, 0.6);
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink);
+    transition:
+      border-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgba(34, 211, 238, 0.08);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 380ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .link:hover::before,
+  .link:focus-visible::before {
+    transform: scaleX(1);
+  }
+
+  .link--accent {
+    border-color: rgba(34, 211, 238, 0.35);
+  }
+
+  .link:hover,
+  .link:focus-visible {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .wordmark {
+    margin: 72px 0 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(232, 236, 238, 0.3);
+  }
+
+  @media (max-width: 640px) {
+    .section {
+      padding: 104px var(--gutter);
+    }
+
+    .hero__lede {
+      font-size: 17px;
+    }
+  }
+
+  /* --- Scroll cue ------------------------------------------------------ */
+
+  .scroll-cue {
+    display: grid;
+    justify-items: start;
+    gap: 12px;
+    margin-top: 64px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(232, 236, 238, 0.4);
+    transition: color 260ms ease;
+  }
+
+  .scroll-cue:hover,
+  .scroll-cue:focus-visible {
+    color: var(--accent);
+  }
+
+  .scroll-cue__rail {
+    position: relative;
+    width: 1px;
+    height: 46px;
+    overflow: hidden;
+    background: rgba(232, 236, 238, 0.14);
+  }
+
+  /* A pulse of accent falling down the rail, once every few seconds. */
+  .scroll-cue__rail::after {
+    content: '';
+    position: absolute;
+    inset: -60% 0 auto;
+    height: 60%;
+    background: linear-gradient(180deg, rgba(34, 211, 238, 0), var(--accent));
+  }
+
+  /* The cue has done its job once you have started scrolling. */
+  @supports (animation-timeline: scroll()) {
+    .scroll-cue {
+      animation: cue-retire linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 22vh;
+    }
+  }
+
+  @keyframes cue-retire {
+    to {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+
+  /* --- Entrances -------------------------------------------------------- */
+
+  @media (prefers-reduced-motion: no-preference) {
+    .scroll-cue__rail::after {
+      animation: cue-fall 2.8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    }
+
+    .rise {
+      animation: rise 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+
+    .rise--1 {
+      animation-delay: 80ms;
+    }
+    .rise--2 {
+      animation-delay: 180ms;
+    }
+    .rise--3 {
+      animation-delay: 320ms;
+    }
+    .rise--4 {
+      animation-delay: 520ms;
+    }
+
+    /* Scroll-linked reveals, where supported. Everywhere else the content is
+       simply visible — nothing is hidden behind a script. */
+    @supports (animation-timeline: view()) {
+      .reveal {
+        animation: rise linear both;
+        animation-timeline: view();
+        animation-range: entry 5% cover 26%;
+      }
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes cue-fall {
+    0% {
+      transform: translateY(0);
+    }
+    70%,
+    100% {
+      transform: translateY(240%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .link,
+    .card,
+    .card::after,
+    .link::before,
+    .scroll-cue {
+      transition: none;
+    }
+  }
+</style>

@@ -1,7 +1,24 @@
 # Marxvim
-🌴 copyright protected
 
-![photo-1520639221359-ad5e91f01cfd](https://user-images.githubusercontent.com/40407778/126056975-edf1767b-a924-4142-b8a3-31f02930777b.jpg)
+Independent lab working at the boundary between quantum computation and machine learning.
 
-[Link to lobby in prod](https://www.marxvim.com/) | 
-[Link to lobby in dev](https://www.marxvim.com/?siteRevision=190)
+**[marxvim.com](https://marxvim.com)** · **[GitHub Pages](https://marxvim.github.io)**
+
+Small team, long horizon, open results.
+
+## What we work on
+
+1. **Quantum algorithms** — variational and error-corrected methods for problems classical hardware handles badly.
+2. **Learning systems** — model architectures and training regimes that assume quantum resources are part of the stack.
+3. **Compilation** — hardware-aware toolchains that turn those algorithms into circuits that actually run.
+
+## This repository
+
+Organization landing page, matching [marxvim.com](https://marxvim.com). Built with [Astro](https://astro.build) (static) and a deferred three.js lattice background. Published to GitHub Pages.
+
+```bash
+npm install
+npm run dev      # http://localhost:4321/
+npm run build
+npm run preview
+```

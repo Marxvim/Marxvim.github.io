@@ -1,0 +1,39 @@
+---
+/**
+ * Hairline scroll indicator. Driven entirely by a CSS scroll-timeline — no JS,
+ * no scroll listener. Browsers without scroll-driven animations simply never
+ * see it (it stays scaled to zero) rather than getting a janky fallback.
+ */
+---
+
+<div class="scroll-progress" aria-hidden="true"></div>
+
+<style>
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 4;
+    height: 1px;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    background: linear-gradient(90deg, rgba(34, 211, 238, 0.15), var(--accent));
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .scroll-progress {
+      animation: scroll-progress linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+
+  @keyframes scroll-progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+</style>

@@ -1,0 +1,45 @@
+<header class="site-header">
+  <a class="site-header__mark" href={import.meta.env.BASE_URL}>marxvim</a>
+  <p class="site-header__meta">Research lab &middot; est. 2026</p>
+</header>
+
+<style>
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 26px var(--gutter);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(232, 236, 238, 0.55);
+  }
+
+  .site-header__mark {
+    color: var(--ink);
+  }
+
+  .site-header__mark:hover {
+    color: var(--accent);
+  }
+
+  .site-header__meta {
+    margin: 0;
+    text-align: right;
+  }
+
+  @media (max-width: 640px) {
+    .site-header {
+      padding: 20px var(--gutter);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+    }
+  }
+</style>

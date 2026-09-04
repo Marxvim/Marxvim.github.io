@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://marxvim.github.io/sitemap-index.xml
