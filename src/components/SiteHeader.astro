@@ -1,43 +1,6 @@
----
-const links = [
-  { label: 'Home', href: 'https://marxvim.com' },
-  { label: 'Enterprise Console', href: 'https://enterprise.marxvim.com' },
-  { label: 'n8n', href: 'https://n8n.marxvim.com' },
-  {
-    label: 'Langfuse',
-    href: 'https://4b51-2601-447-d080-cc80-41d9-8112-26f-595c.ngrok-free.app/',
-  },
-];
----
-
 <header class="site-header">
   <a class="site-header__mark" href={import.meta.env.BASE_URL}>marxvim</a>
-
-  <nav class="site-nav site-nav--desktop" aria-label="Marxvim tools">
-    {
-      links.map((link) => (
-        <a class="site-nav__link" href={link.href} rel="noopener">
-          {link.label}
-        </a>
-      ))
-    }
-  </nav>
-
-  <details class="site-menu">
-    <summary class="site-menu__toggle">
-      Menu
-      <span class="site-menu__icon" aria-hidden="true"></span>
-    </summary>
-    <nav class="site-menu__panel" aria-label="Marxvim tools">
-      {
-        links.map((link) => (
-          <a class="site-menu__link" href={link.href} rel="noopener">
-            {link.label}
-          </a>
-        ))
-      }
-    </nav>
-  </details>
+  <p class="site-header__meta">Systems index</p>
 </header>
 
 <style>
@@ -50,112 +13,33 @@ const links = [
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 24px;
-    padding: 22px var(--gutter);
+    gap: 16px;
+    padding: 26px var(--gutter);
     font-family: var(--mono);
     font-size: 12px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: rgba(232, 236, 238, 0.55);
-    background: linear-gradient(180deg, rgba(5, 6, 7, 0.82) 0%, rgba(5, 6, 7, 0) 100%);
   }
 
   .site-header__mark {
     color: var(--ink);
-    flex: none;
   }
 
   .site-header__mark:hover {
     color: var(--accent);
   }
 
-  .site-nav {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    gap: 8px 28px;
+  .site-header__meta {
+    margin: 0;
+    text-align: right;
   }
 
-  .site-nav__link {
-    color: rgba(232, 236, 238, 0.62);
-    transition: color 160ms ease;
-  }
-
-  .site-nav__link:hover,
-  .site-nav__link:focus-visible {
-    color: var(--accent);
-  }
-
-  .site-menu {
-    display: none;
-    position: relative;
-  }
-
-  .site-menu__toggle {
-    list-style: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-height: 44px;
-    color: var(--ink);
-    letter-spacing: 0.18em;
-  }
-
-  .site-menu__toggle::-webkit-details-marker {
-    display: none;
-  }
-
-  .site-menu__icon {
-    width: 14px;
-    height: 1px;
-    background: currentColor;
-    box-shadow: 0 -5px 0 currentColor, 0 5px 0 currentColor;
-  }
-
-  .site-menu[open] .site-menu__toggle {
-    color: var(--accent);
-  }
-
-  .site-menu__panel {
-    position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
-    display: grid;
-    min-width: min(280px, 86vw);
-    padding: 10px 0;
-    background: rgba(5, 6, 7, 0.94);
-    border: 1px solid rgba(232, 236, 238, 0.14);
-  }
-
-  .site-menu__link {
-    padding: 14px 18px;
-    color: rgba(232, 236, 238, 0.72);
-    border-top: 1px solid rgba(232, 236, 238, 0.08);
-  }
-
-  .site-menu__link:first-child {
-    border-top: 0;
-  }
-
-  .site-menu__link:hover,
-  .site-menu__link:focus-visible {
-    color: var(--accent);
-    background: rgba(34, 211, 238, 0.06);
-  }
-
-  @media (max-width: 860px) {
-    .site-nav--desktop {
-      display: none;
-    }
-
-    .site-menu {
-      display: block;
-    }
-
+  @media (max-width: 640px) {
     .site-header {
-      padding: 12px var(--gutter);
+      padding: 20px var(--gutter);
+      font-size: 10px;
+      letter-spacing: 0.14em;
     }
   }
 </style>

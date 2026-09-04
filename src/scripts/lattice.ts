@@ -19,13 +19,10 @@ interface Cell {
   edgeCore: boolean;
 }
 
-const smoothstep = (t: number) => t * t * (3 - 2 * t);
-const clamp01 = (t: number) => Math.min(1, Math.max(0, t));
-
 /**
- * Decorative background: a lattice of wireframe cells that detonates outward as
- * the page is scrolled. Purely presentational — the page is fully readable if
- * this never initialises.
+ * Decorative background: a lattice of wireframe cells with routing pulses that
+ * travel outward through the grid. Purely presentational — the page is fully
+ * readable if this never initialises.
  */
 class MarxLattice extends HTMLElement {
   #raf = 0;
@@ -127,14 +124,6 @@ class MarxLattice extends HTMLElement {
     ro.observe(this);
     this.#teardown.push(() => ro.disconnect());
 
-    let progress = 0;
-    let target = 0;
-    const readScroll = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      target = max > 0 ? clamp01(window.scrollY / max) : 0;
-    };
-    readScroll();
-
     const pointer = { x: 0, y: 0 };
     const onPointer = (e: PointerEvent) => {
       pointer.x = (e.clientX / window.innerWidth - 0.5) * 2;
@@ -150,25 +139,33 @@ class MarxLattice extends HTMLElement {
       this.#teardown.push(() => window.removeEventListener(type, fn, opts));
     };
 
-    on('scroll', readScroll, { passive: true });
-    on('resize', readScroll);
     on('pointermove', onPointer, { passive: true });
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-    /** Lay out every cell for a given scroll progress and draw one frame. */
+    /** Routing pulses travel outward through the lattice — a switch, not a detonation. */
     const draw = (elapsed: number) => {
-      group.rotation.y = elapsed * 0.08 + pointer.x * 0.18 + progress * 1.1;
-      group.rotation.x = Math.sin(elapsed * 0.14) * 0.12 - pointer.y * 0.12 + progress * 0.25;
-      camera.position.z = 12 + progress * 5;
+      group.rotation.y = elapsed * 0.11 + pointer.x * 0.16;
+      group.rotation.x = Math.sin(elapsed * 0.19) * 0.2 - pointer.y * 0.1;
+      group.rotation.z = Math.sin(elapsed * 0.07) * 0.09;
+      camera.position.z = 11.4;
+
+      const pulseA = (elapsed * 0.42) % 1;
+      const pulseB = (elapsed * 0.23 + 0.5) % 1;
 
       for (const c of cells) {
-        const p = smoothstep(clamp01((progress - c.delay) / (1 - c.delay)));
-        c.cell.position.copy(c.home).addScaledVector(c.dir, p * c.spread);
-        c.cell.rotation.set(c.spin.x * p, c.spin.y * p, c.spin.z * p);
-        c.cell.scale.setScalar(1 - p * 0.45);
-        c.line.material.opacity = 0.34 * (1 - p * 0.85) + (c.edgeCore ? 0.1 * (1 - p) : 0);
-        c.face.material.opacity = 0.55 * (1 - p);
+        const dist = c.home.length();
+        const norm = dist / 4.4;
+        const hitA = Math.exp(-(((norm - pulseA) * 6.8) ** 2));
+        const hitB = Math.exp(-(((norm - pulseB) * 8.4) ** 2)) * 0.5;
+        const hit = Math.max(hitA, hitB);
+        const drift = 0.12 * Math.sin(elapsed * 0.9 + dist * 1.3 + c.delay * 4);
+
+        c.cell.position.copy(c.home).addScaledVector(c.dir, drift);
+        c.cell.rotation.set(0, elapsed * (c.edgeCore ? 0.22 : -0.16), hit * 0.35);
+        c.cell.scale.setScalar(0.72 + hit * 0.48);
+        c.line.material.opacity = 0.1 + hit * 0.62 + (c.edgeCore ? 0.08 : 0);
+        c.face.material.opacity = 0.16 + hit * 0.4;
       }
 
       renderer.render(scene, camera);
@@ -176,22 +173,14 @@ class MarxLattice extends HTMLElement {
 
     const origin = performance.now();
     const seconds = () => (performance.now() - origin) / 1000;
-    let last = 0;
 
     const tick = () => {
       this.#raf = requestAnimationFrame(tick);
-      const elapsed = seconds();
-      const dt = Math.min(elapsed - last, 0.1);
-      last = elapsed;
-
-      // Frame-rate independent easing: matches the design's 0.08/frame at 60fps.
-      progress += (target - progress) * (1 - Math.pow(1 - 0.08, dt * 60));
-      draw(elapsed);
+      draw(seconds());
     };
 
     const start = () => {
       if (this.#raf || reduceMotion.matches) return;
-      last = seconds();
       tick();
     };
     const stop = () => {
@@ -199,22 +188,11 @@ class MarxLattice extends HTMLElement {
       this.#raf = 0;
     };
 
-    // Reduced motion: render the lattice at rest, tracking scroll without
-    // animating drift, spin or damping.
-    const staticDraw = () => {
-      readScroll();
-      progress = target;
-      draw(0);
-    };
-
     const applyMotionPreference = () => {
       if (reduceMotion.matches) {
         stop();
-        staticDraw();
-        this.#teardown.push(() => window.removeEventListener('scroll', staticDraw));
-        window.addEventListener('scroll', staticDraw, { passive: true });
+        draw(0);
       } else {
-        window.removeEventListener('scroll', staticDraw);
         start();
       }
     };
