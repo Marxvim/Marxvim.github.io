@@ -2,616 +2,582 @@
 import Layout from '../layouts/Layout.astro';
 import Lattice from '../components/Lattice.astro';
 import SiteHeader from '../components/SiteHeader.astro';
+import SystemIcon from '../components/SystemIcon.astro';
 
 const title = 'Marxvim — Systems';
 const description = 'Directory for Marxvim systems.';
 
-const destinations = [
+const systems = [
   {
     label: 'Home',
-    hint: 'marxvim.com',
+    host: 'marxvim.com',
+    note: 'Public site.',
     href: 'https://marxvim.com',
     icon: 'home',
   },
   {
     label: 'Enterprise Console',
-    hint: 'enterprise.marxvim.com',
+    host: 'enterprise.marxvim.com',
+    note: 'Enterprise operator console.',
     href: 'https://enterprise.marxvim.com',
     icon: 'console',
   },
   {
     label: 'n8n',
-    hint: 'n8n.marxvim.com',
+    host: 'n8n.marxvim.com',
+    note: 'Workflow automation and orchestration.',
     href: 'https://n8n.marxvim.com',
     icon: 'n8n',
   },
   {
     label: 'Langfuse',
-    hint: 'observability',
+    host: 'ngrok tunnel',
+    note: 'Tracing, evals, and observability.',
     href: 'https://4b51-2601-447-d080-cc80-41d9-8112-26f-595c.ngrok-free.app/',
     icon: 'langfuse',
   },
   {
     label: 'GitHub',
-    hint: 'github.com/marxvim',
+    host: 'github.com/marxvim',
+    note: 'Source, issues, and CI.',
     href: 'https://github.com/marxvim',
     icon: 'github',
   },
   {
     label: 'Node Enterprise',
-    hint: 'app.nodeenterprise.ai',
+    host: 'app.nodeenterprise.ai',
+    note: 'Node Enterprise application.',
     href: 'https://app.nodeenterprise.ai/',
     icon: 'node',
   },
   {
     label: 'Fortify Risk',
-    hint: 'fortifyriskai-lp-app.vercel.app',
+    host: 'fortifyriskai-lp-app.vercel.app',
+    note: 'Fortify Risk application.',
     href: 'https://fortifyriskai-lp-app.vercel.app/',
     icon: 'fortify',
   },
 ] as const;
+
+const total = String(systems.length).padStart(2, '0');
 ---
 
 <Layout title={title} description={description}>
   <Lattice />
   <SiteHeader />
 
-  <main class="gate">
-    <div class="gate__lead rise rise--1">
-      <div>
-        <h1 class="visually-hidden">Marxvim systems</h1>
-        <p class="eyebrow">Select a system</p>
-      </div>
+  <main class="console">
+    <h1 class="visually-hidden">Marxvim systems</h1>
 
-      <label class="finder">
-        <span class="finder__icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none">
-            <circle cx="10.5" cy="10.5" r="6" stroke="currentColor" stroke-width="1.6"></circle>
-            <path d="M15.2 15.2L20 20" stroke="currentColor" stroke-width="1.6"></path>
-          </svg>
-        </span>
+    <div class="frame">
+      <div class="query">
+        <span class="query__prompt" aria-hidden="true">systems</span>
+        <span class="query__sep" aria-hidden="true">/</span>
         <input
-          class="finder__input"
-          type="search"
-          placeholder="Search systems"
+          id="sys-query"
+          class="query__input"
+          type="text"
+          role="combobox"
+          aria-expanded="true"
+          aria-controls="sys-list"
+          aria-autocomplete="list"
+          aria-label="Filter systems"
+          placeholder="type to filter"
           autocomplete="off"
           spellcheck="false"
         />
-      </label>
-    </div>
+        <span class="query__count" data-count>{total}</span>
+      </div>
 
-    <nav class="sys-rail" aria-label="Marxvim systems">
-      {
-        destinations.map((item, i) => (
-          <a
-            class="sys-tile rise"
-            href={item.href}
-            rel="noopener"
-            style={`--i:${i}`}
-            data-search={`${item.label} ${item.hint} ${item.href}`.toLowerCase()}
-          >
-            <span class={`glass glass--${item.icon}`} aria-hidden="true">
-              <span class="glass__plate">
-                <span class="glass__sheen"></span>
-                <span class="glass__spec"></span>
-                <span class="glass__mark">
-                  {item.icon === 'home' && (
-                    <svg viewBox="0 0 48 48" fill="none">
-                      <rect class="draw sq-a" x="8" y="8" width="18" height="18" />
-                      <rect class="draw sq-b" x="22" y="22" width="18" height="18" />
-                    </svg>
-                  )}
-                  {item.icon === 'console' && (
-                    <svg viewBox="0 0 48 48" fill="none">
-                      <rect class="draw" x="7" y="10" width="34" height="28" />
-                      <path class="caret" d="M13 20l6 4-6 4" />
-                      <path class="prompt" d="M22 28h10" />
-                    </svg>
-                  )}
-                  {item.icon === 'n8n' && (
-                    <svg viewBox="0 0 48 48" fill="none">
-                      <path class="edge" d="M16.2 21.4L19.8 16.2M16.2 26.6L19.8 31.8M28.2 16.2L31.8 21.4M28.2 31.8L31.8 26.6" />
-                      <circle class="node n1" cx="12" cy="24" r="4.5" />
-                      <circle class="node n2" cx="24" cy="13" r="4.5" />
-                      <circle class="node n3" cx="24" cy="35" r="4.5" />
-                      <circle class="node n4" cx="36" cy="24" r="4.5" />
-                    </svg>
-                  )}
-                  {item.icon === 'langfuse' && (
-                    <svg viewBox="0 0 48 48" fill="none">
-                      <path class="bar b1" d="M10 32V16" />
-                      <path class="bar b2" d="M20 32V12" />
-                      <path class="bar b3" d="M30 32V20" />
-                      <path class="bar b4" d="M38 32V8" />
-                      <circle class="dot d1" cx="10" cy="16" r="2.2" />
-                      <circle class="dot d2" cx="20" cy="12" r="2.2" />
-                      <circle class="dot d3" cx="30" cy="20" r="2.2" />
-                      <circle class="dot d4" cx="38" cy="8" r="2.2" />
-                    </svg>
-                  )}
-                  {item.icon === 'github' && (
-                    <svg class="octo" viewBox="0 0 48 48" fill="currentColor">
-                      <path d="M24 6C14.1 6 6 14.2 6 24.2c0 8 5.2 14.8 12.4 17.2.9.2 1.2-.4 1.2-.9v-3.3c-5 .1-6.1-2.4-6.1-2.4-.8-2.1-2-2.7-2-2.7-1.6-1.1.1-1.1.1-1.1 1.8.1 2.8 1.9 2.8 1.9 1.6 2.8 4.2 2 5.2 1.5.2-1.2.6-2 .1-2.5-4-.5-8.2-2-8.2-9 0-2 .7-3.6 1.8-4.9-.2-.5-.8-2.3.2-4.7 0 0 1.5-.5 5 1.9 1.4-.4 3-.6 4.6-.6s3.2.2 4.6.6c3.5-2.4 5-1.9 5-1.9 1 2.4.4 4.2.2 4.7 1.1 1.3 1.8 2.9 1.8 4.9 0 7-4.2 8.5-8.2 9 .7.6 1.3 1.8 1.3 3.6v5.3c0 .5.3 1.1 1.2.9C36.8 39 42 32.2 42 24.2 42 14.2 33.9 6 24 6z" />
-                    </svg>
-                  )}
-                  {item.icon === 'node' && (
-                    <svg viewBox="0 0 48 48" fill="none">
-                      <path class="edge" d="M18 18.5L24 13M30 18.5L24 13M18 29.5L24 35M30 29.5L24 35M16.5 22L16.5 26M31.5 22L31.5 26" />
-                      <circle class="node n1" cx="16" cy="20" r="4" />
-                      <circle class="node n2" cx="32" cy="20" r="4" />
-                      <circle class="node n3" cx="16" cy="28" r="4" />
-                      <circle class="node n4" cx="32" cy="28" r="4" />
-                      <circle class="node n5" cx="24" cy="12" r="3.4" />
-                      <circle class="node n6" cx="24" cy="36" r="3.4" />
-                    </svg>
-                  )}
-                  {item.icon === 'fortify' && (
-                    <svg viewBox="0 0 48 48" fill="none">
-                      <path class="shield" d="M24 8l14 6v10c0 9.2-6.2 14.8-14 17-7.8-2.2-14-7.8-14-17V14z" />
-                      <path class="check" d="M17 24l5 5 9-10" />
-                    </svg>
-                  )}
+      <div class="body">
+        <ul id="sys-list" class="list" role="listbox" aria-label="Systems">
+          {
+            systems.map((item, i) => (
+              <li class="list__item" role="presentation">
+                <a
+                  class="row"
+                  id={`sys-${i}`}
+                  role="option"
+                  aria-selected={i === 0 ? 'true' : 'false'}
+                  href={item.href}
+                  rel="noopener"
+                  data-index={i}
+                  data-search={`${item.label} ${item.host} ${item.note} ${item.href}`.toLowerCase()}
+                >
+                  <span class="row__n">{String(i + 1).padStart(2, '0')}</span>
+                  <span class="row__mark mark" aria-hidden="true">
+                    <SystemIcon name={item.icon} />
+                  </span>
+                  <span class="row__label">{item.label}</span>
+                  <span class="row__host">{item.host}</span>
+                  <span class="row__go" aria-hidden="true">
+                    ↵
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+          <li class="list__empty" role="presentation" hidden>No system matches.</li>
+        </ul>
+
+        <aside class="detail" aria-live="polite">
+          {
+            systems.map((item, i) => (
+              <article class="card" data-card={i} hidden={i !== 0}>
+                <span class="card__n" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
                 </span>
-              </span>
-            </span>
-            <span class="sys-tile__label">{item.label}</span>
-            <span class="sys-tile__hint">{item.hint}</span>
-          </a>
-        ))
-      }
-      <p class="sys-empty" hidden>No systems match.</p>
-    </nav>
+                <span class="card__mark mark mark--live" aria-hidden="true">
+                  <SystemIcon name={item.icon} />
+                </span>
+                <h2 class="card__label">{item.label}</h2>
+                <p class="card__note">{item.note}</p>
+                <span class="card__url">{item.href.replace(/^https?:\/\//, '').replace(/\/$/, '')}</span>
+              </article>
+            ))
+          }
+        </aside>
+      </div>
+
+      <p class="keys">
+        <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+        <span><kbd>↵</kbd> open</span>
+        <span><kbd>esc</kbd> clear</span>
+      </p>
+    </div>
   </main>
 </Layout>
 
 <script>
-  const rail = document.querySelector('.sys-rail');
-  const input = document.querySelector('.finder__input');
-  const tiles = [...document.querySelectorAll('.sys-tile')];
-  const empty = document.querySelector('.sys-empty');
+  const input = document.querySelector<HTMLInputElement>('.query__input');
+  const list = document.querySelector<HTMLElement>('.list');
+  const rows = [...document.querySelectorAll<HTMLAnchorElement>('.row')];
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-card]')];
+  const empty = document.querySelector<HTMLElement>('.list__empty');
+  const count = document.querySelector<HTMLElement>('[data-count]');
 
-  if (rail instanceof HTMLElement) {
-    rail.addEventListener(
-      'wheel',
-      (event) => {
-        if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
-        event.preventDefault();
-        rail.scrollLeft += event.deltaY;
-      },
-      { passive: false },
-    );
-  }
+  if (input && list && empty && count && rows.length) {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    let visible = [...rows];
+    let active = 0;
 
-  if (input instanceof HTMLInputElement && empty instanceof HTMLElement) {
+    /** Nudges the WebGL lattice so the background answers the selection. */
+    const signal = (index: number) => {
+      window.dispatchEvent(
+        new CustomEvent('marx:select', { detail: { index, total: rows.length } }),
+      );
+    };
+
+    const select = (next: number, { scroll = true } = {}) => {
+      if (!visible.length) return;
+      active = Math.max(0, Math.min(next, visible.length - 1));
+      const row = visible[active];
+
+      for (const other of rows) other.setAttribute('aria-selected', 'false');
+      row.setAttribute('aria-selected', 'true');
+      input.setAttribute('aria-activedescendant', row.id);
+
+      const index = Number(row.dataset.index);
+      for (const card of cards) card.hidden = Number(card.dataset.card) !== index;
+
+      if (scroll) row.scrollIntoView({ block: 'nearest' });
+      signal(index);
+    };
+
     const filter = () => {
       const query = input.value.trim().toLowerCase();
-      let shown = 0;
-      for (const tile of tiles) {
-        if (!(tile instanceof HTMLElement)) continue;
-        const hay = tile.dataset.search ?? '';
-        const match = query.length === 0 || hay.includes(query);
-        tile.hidden = !match;
-        if (match) shown += 1;
+
+      for (const row of rows) {
+        const match = !query || (row.dataset.search ?? '').includes(query);
+        (row.parentElement as HTMLElement).hidden = !match;
       }
-      empty.hidden = shown > 0;
+
+      visible = rows.filter((row) => !(row.parentElement as HTMLElement).hidden);
+      empty.hidden = visible.length > 0;
+      count.textContent = query ? `${pad(visible.length)}/${pad(rows.length)}` : pad(rows.length);
+
+      select(0, { scroll: false });
     };
 
     input.addEventListener('input', filter);
-    window.addEventListener('keydown', (event) => {
-      if (event.key === '/' && document.activeElement !== input) {
+
+    input.addEventListener('keydown', (event) => {
+      const step =
+        event.key === 'ArrowDown' || (event.ctrlKey && event.key === 'n')
+          ? 1
+          : event.key === 'ArrowUp' || (event.ctrlKey && event.key === 'p')
+            ? -1
+            : 0;
+
+      if (step) {
         event.preventDefault();
-        input.focus();
+        // Wrap so the list behaves like a dial rather than dead-ending.
+        select((active + step + visible.length) % visible.length);
+        return;
       }
-      if (event.key === 'Escape' && document.activeElement === input) {
+
+      if (event.key === 'Enter' && visible.length) {
+        event.preventDefault();
+        const href = visible[active].href;
+        if (event.metaKey || event.ctrlKey) window.open(href, '_blank', 'noopener');
+        else window.location.href = href;
+        return;
+      }
+
+      if (event.key === 'Escape') {
+        event.preventDefault();
         input.value = '';
         filter();
-        input.blur();
       }
     });
+
+    for (const row of rows) {
+      row.addEventListener('pointerenter', () => {
+        const at = visible.indexOf(row);
+        if (at >= 0) select(at, { scroll: false });
+      });
+      row.addEventListener('focus', () => {
+        const at = visible.indexOf(row);
+        if (at >= 0) select(at, { scroll: false });
+      });
+    }
+
+    // The console owns the keyboard: start typing anywhere and the query takes it.
+    window.addEventListener('keydown', (event) => {
+      if (document.activeElement === input) return;
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      if (event.key === '/' || event.key.length === 1) {
+        input.focus();
+        if (event.key === '/') event.preventDefault();
+      }
+    });
+
+    filter();
+    input.focus({ preventScroll: true });
   }
 </script>
 
 <style is:global>
   html,
   body {
-    overflow-y: hidden;
+    overflow: hidden;
   }
 </style>
 
 <style>
-  .gate {
+  .console {
     position: relative;
     z-index: 2;
-    min-height: 100vh;
-    min-height: 100svh;
+    height: 100vh;
+    height: 100svh;
     display: grid;
-    align-content: center;
-    gap: 28px;
-    padding: 110px 0 48px;
+    place-items: center;
+    padding: 96px var(--gutter) 40px;
   }
 
-  .gate__lead {
-    display: flex;
-    align-items: end;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 0 var(--gutter);
+  /* Hairline frame floating over the lattice — blurred for legibility, never glossy. */
+  .frame {
+    width: min(var(--measure), 100%);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    /* Sized to the full list so nothing jumps as the query narrows it. */
+    height: min(482px, 100%);
+    border: 1px solid var(--rule);
+    background: rgba(5, 6, 7, 0.58);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    animation: frame-in 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
 
-  .eyebrow {
-    margin: 0;
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.24em;
-    text-transform: uppercase;
-    color: var(--accent);
-  }
-
-  .finder {
+  .query {
     display: flex;
     align-items: center;
     gap: 10px;
-    min-width: min(320px, 52vw);
-    padding: 0 14px;
-    border: 1px solid rgba(232, 236, 238, 0.18);
-    background: rgba(5, 6, 7, 0.55);
-    color: rgba(232, 236, 238, 0.55);
-    backdrop-filter: blur(14px);
+    padding: 0 20px;
+    height: 54px;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
   }
 
-  .finder:focus-within {
-    border-color: var(--accent);
+  .query__prompt {
+    color: rgba(232, 236, 238, 0.4);
+  }
+
+  .query__sep {
     color: var(--accent);
   }
 
-  .finder__icon {
-    display: grid;
-  }
-
-  .finder__input {
+  .query__input {
     flex: 1;
     min-width: 0;
-    height: 42px;
     border: 0;
     background: transparent;
-    color: var(--ink);
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.12em;
+    color: var(--ink-bright);
+    font: inherit;
+    letter-spacing: 0.1em;
+    text-transform: none;
     outline: none;
   }
 
-  .finder__input::placeholder {
-    color: rgba(232, 236, 238, 0.38);
-    text-transform: uppercase;
+  .query__input::placeholder {
+    color: rgba(232, 236, 238, 0.28);
   }
 
-  .sys-rail {
-    display: flex;
-    align-items: stretch;
-    gap: 1px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    overscroll-behavior-x: contain;
-    background: var(--rule);
-    border-block: 1px solid var(--rule);
-    padding-inline: var(--gutter);
-    scrollbar-color: rgba(34, 211, 238, 0.45) transparent;
-    scrollbar-width: thin;
+  .query__count {
+    color: rgba(232, 236, 238, 0.4);
+    font-variant-numeric: tabular-nums;
   }
 
-  .sys-rail::-webkit-scrollbar {
-    height: 4px;
+  .body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr);
+    min-height: 0;
   }
 
-  .sys-rail::-webkit-scrollbar-thumb {
-    background: rgba(34, 211, 238, 0.4);
-  }
-
-  .sys-empty {
+  .list {
     margin: 0;
-    padding: 48px 8px;
+    padding: 0;
+    list-style: none;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(232, 236, 238, 0.18) transparent;
+  }
+
+  .list__item + .list__item .row {
+    border-top: 1px solid rgba(232, 236, 238, 0.06);
+  }
+
+  .list__empty {
+    padding: 26px 20px;
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: rgba(232, 236, 238, 0.42);
+    color: rgba(232, 236, 238, 0.35);
+  }
+
+  .row {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 14px;
+    padding: 0 20px;
+    height: 54px;
+    color: var(--ink);
+    transition:
+      background-color 160ms ease,
+      color 160ms ease;
+  }
+
+  /* Accent bar marks the active row instead of a filled highlight block. */
+  .row::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 2px;
+    background: var(--accent);
+    transform: scaleY(0);
+    transition: transform 200ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .row[aria-selected='true'] {
+    background: rgba(34, 211, 238, 0.05);
+  }
+
+  .row[aria-selected='true']::before {
+    transform: scaleY(1);
+  }
+
+  .row__n {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: rgba(232, 236, 238, 0.3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .row__mark {
+    display: block;
+    width: 17px;
+    height: 17px;
+    --mark-stroke: 1.15;
+    color: rgba(232, 236, 238, 0.45);
+    transition: color 160ms ease;
+  }
+
+  .row__label {
+    font-size: 14px;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .row__host {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(232, 236, 238, 0.28);
     white-space: nowrap;
   }
 
-  .sys-tile {
-    position: relative;
-    isolation: isolate;
-    flex: 0 0 228px;
-    display: grid;
-    justify-items: start;
-    align-content: end;
-    gap: 10px;
-    height: 228px;
-    padding: 22px 20px;
-    background: rgba(5, 6, 7, 0.42);
-    color: var(--ink);
-    overflow: hidden;
-    scroll-snap-align: start;
-    transition:
-      color 220ms ease,
-      background-color 260ms ease;
+  .row__go {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    opacity: 0;
+    transition: opacity 160ms ease;
   }
 
-  .sys-tile[hidden] {
+  .row[aria-selected='true'] .row__n,
+  .row[aria-selected='true'] .row__mark {
+    color: var(--accent);
+  }
+
+  .row[aria-selected='true'] .row__label {
+    color: var(--ink-bright);
+  }
+
+  .row[aria-selected='true'] .row__go {
+    opacity: 1;
+  }
+
+  .detail {
+    position: relative;
+    display: grid;
+    border-left: 1px solid var(--rule);
+    min-height: 0;
+  }
+
+  .card {
+    grid-area: 1 / 1;
+    align-content: center;
+    display: grid;
+    gap: 0;
+    padding: 28px;
+    min-width: 0;
+    animation: card-in 320ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .card[hidden] {
     display: none;
   }
 
-  .sys-tile::after {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto;
-    height: 1px;
-    background: var(--accent);
-    transform: scaleX(0);
-    transform-origin: 0 50%;
-    transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1);
-  }
-
-  .sys-tile:hover,
-  .sys-tile:focus-visible {
-    color: var(--ink-bright);
-    background-color: rgba(9, 15, 18, 0.28);
-  }
-
-  .sys-tile:hover::after,
-  .sys-tile:focus-visible::after {
-    transform: scaleX(1);
-  }
-
-  .glass {
+  .card__n {
     position: absolute;
     top: 20px;
-    left: 20px;
-    width: 64px;
-    height: 64px;
-    perspective: 320px;
+    right: 26px;
+    font-family: var(--mono);
+    font-size: 64px;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: rgba(232, 236, 238, 0.05);
+    font-variant-numeric: tabular-nums;
   }
 
-  .glass__plate {
-    position: relative;
-    display: grid;
-    place-items: center;
-    width: 100%;
-    height: 100%;
-    border-radius: 20px;
-    overflow: hidden;
-    color: #e8fbff;
-    background:
-      linear-gradient(155deg, rgba(255, 255, 255, 0.34) 0%, rgba(34, 211, 238, 0.12) 38%, rgba(255, 255, 255, 0.05) 72%),
-      rgba(12, 22, 26, 0.28);
-    border: 1px solid rgba(255, 255, 255, 0.32);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.55),
-      inset 0 -18px 28px rgba(34, 211, 238, 0.08),
-      0 18px 40px rgba(0, 0, 0, 0.28);
-    backdrop-filter: blur(18px) saturate(160%);
-    -webkit-backdrop-filter: blur(18px) saturate(160%);
-    transform-style: preserve-3d;
+  .card__mark {
+    display: block;
+    width: 46px;
+    height: 46px;
+    margin-bottom: 26px;
+    --mark-stroke: 1.25;
+    color: var(--accent);
   }
 
-  .glass__sheen,
-  .glass__spec {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-  }
-
-  .glass__sheen {
-    background: linear-gradient(
-      115deg,
-      transparent 30%,
-      rgba(255, 255, 255, 0.08) 44%,
-      rgba(255, 255, 255, 0.55) 50%,
-      rgba(34, 211, 238, 0.18) 56%,
-      transparent 70%
-    );
-    transform: translateX(-120%);
-  }
-
-  .glass__spec {
-    background: radial-gradient(circle at 28% 22%, rgba(255, 255, 255, 0.62), transparent 34%);
-  }
-
-  .glass__mark {
-    position: relative;
-    z-index: 1;
-    width: 34px;
-    height: 34px;
-    color: rgba(232, 251, 255, 0.94);
-    filter: drop-shadow(0 0 10px rgba(34, 211, 238, 0.35));
-  }
-
-  .glass__mark svg {
-    width: 100%;
-    height: 100%;
-  }
-
-  .glass__mark .draw,
-  .glass__mark .caret,
-  .glass__mark .prompt,
-  .glass__mark .edge,
-  .glass__mark .node,
-  .glass__mark .bar,
-  .glass__mark .shield,
-  .glass__mark .check {
-    stroke: currentColor;
-    stroke-width: 1.7;
-  }
-
-  .glass__mark .dot {
-    fill: currentColor;
-  }
-
-  .sys-tile__label {
-    font-size: 22px;
+  .card__label {
+    margin: 0 0 10px;
+    font-size: 26px;
     font-weight: 500;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    color: var(--ink-bright);
   }
 
-  .sys-tile__hint {
+  .card__note {
+    margin: 0 0 18px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(232, 236, 238, 0.5);
+  }
+
+  .card__url {
     font-family: var(--mono);
     font-size: 10px;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(232, 236, 238, 0.42);
+    color: rgba(232, 236, 238, 0.34);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 100%;
+  }
+
+  .keys {
+    display: flex;
+    gap: 22px;
+    margin: 0;
+    padding: 0 20px;
+    height: 42px;
+    align-items: center;
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(232, 236, 238, 0.3);
+  }
+
+  .keys span {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  kbd {
+    display: grid;
+    place-items: center;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border: 1px solid rgba(232, 236, 238, 0.14);
+    font: inherit;
+    letter-spacing: 0;
+    color: rgba(232, 236, 238, 0.45);
+  }
+
+  @media (max-width: 860px) {
+    .body {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .detail {
+      display: none;
+    }
   }
 
   @media (max-width: 640px) {
-    .gate__lead {
-      flex-direction: column;
-      align-items: stretch;
+    .console {
+      padding: 84px var(--gutter) 28px;
     }
 
-    .finder {
-      min-width: 0;
+    .row__host {
+      display: none;
     }
 
-    .sys-tile {
-      flex-basis: 200px;
-      height: 208px;
+    .keys {
+      gap: 14px;
     }
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .rise {
-      animation: rise 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
-    }
-
-    .sys-tile.rise {
-      animation-delay: calc(120ms + var(--i) * 70ms);
-    }
-
-    .glass__plate {
-      animation: glass-float 5.6s ease-in-out calc(var(--i) * 0.45s) infinite;
-    }
-
-    .glass__sheen {
-      animation: glass-sheen 4.8s cubic-bezier(0.4, 0, 0.2, 1) calc(var(--i) * 0.55s) infinite;
-    }
-
-    .sys-tile:hover .glass__plate,
-    .sys-tile:focus-visible .glass__plate {
-      animation-play-state: paused;
-      transform: rotateX(10deg) rotateY(-12deg) translateY(-4px);
-    }
-
-    .sys-tile:hover .glass__sheen,
-    .sys-tile:focus-visible .glass__sheen {
-      animation-duration: 1.6s;
-    }
-
-    .glass--home .sq-a {
-      animation: home-a 3.4s ease-in-out infinite;
-    }
-
-    .glass--home .sq-b {
-      animation: home-b 3.4s ease-in-out infinite;
-    }
-
-    .glass--console .caret {
-      animation: caret-nudge 1.8s ease-in-out infinite;
-    }
-
-    .glass--console .prompt {
-      stroke-dasharray: 12;
-      animation: prompt-type 2.4s ease-in-out infinite;
-    }
-
-    .glass--n8n .node,
-    .glass--node .node {
-      transform-box: fill-box;
-      transform-origin: center;
-      animation: node-pulse 2.2s ease-in-out infinite;
-    }
-
-    .glass--n8n .n2,
-    .glass--node .n2 {
-      animation-delay: 0.2s;
-    }
-    .glass--n8n .n3,
-    .glass--node .n3 {
-      animation-delay: 0.4s;
-    }
-    .glass--n8n .n4,
-    .glass--node .n4 {
-      animation-delay: 0.6s;
-    }
-    .glass--node .n5 {
-      animation-delay: 0.3s;
-    }
-    .glass--node .n6 {
-      animation-delay: 0.5s;
-    }
-
-    .glass--n8n .edge,
-    .glass--node .edge {
-      stroke-dasharray: 8 6;
-      animation: edge-flow 1.6s linear infinite;
-    }
-
-    .glass--langfuse .bar {
-      transform-box: fill-box;
-      transform-origin: bottom;
-    }
-
-    .glass--langfuse .b1 {
-      animation: bar-wave 1.8s ease-in-out infinite;
-    }
-    .glass--langfuse .b2 {
-      animation: bar-wave 1.8s ease-in-out 0.15s infinite;
-    }
-    .glass--langfuse .b3 {
-      animation: bar-wave 1.8s ease-in-out 0.3s infinite;
-    }
-    .glass--langfuse .b4 {
-      animation: bar-wave 1.8s ease-in-out 0.45s infinite;
-    }
-
-    .glass--langfuse .dot {
-      animation: dot-glow 1.8s ease-in-out infinite;
-    }
-    .glass--langfuse .d2 {
-      animation-delay: 0.15s;
-    }
-    .glass--langfuse .d3 {
-      animation-delay: 0.3s;
-    }
-    .glass--langfuse .d4 {
-      animation-delay: 0.45s;
-    }
-
-    .glass--github .octo {
-      animation: octo-breathe 3.2s ease-in-out infinite;
-    }
-
-    .glass--fortify .shield {
-      transform-box: fill-box;
-      transform-origin: center;
-      animation: shield-pulse 2.6s ease-in-out infinite;
-    }
-
-    .glass--fortify .check {
-      stroke-dasharray: 28;
-      animation: prompt-type 2.2s ease-in-out infinite;
-    }
-  }
-
-  @keyframes rise {
+  @keyframes frame-in {
     from {
       opacity: 0;
-      transform: translateY(18px);
+      transform: translateY(12px);
     }
     to {
       opacity: 1;
@@ -619,103 +585,23 @@ const destinations = [
     }
   }
 
-  @keyframes glass-float {
-    0%,
-    100% {
-      transform: rotateX(4deg) rotateY(-6deg) translateY(0);
+  @keyframes card-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
     }
-    50% {
-      transform: rotateX(-5deg) rotateY(7deg) translateY(-5px);
-    }
-  }
-
-  @keyframes glass-sheen {
-    0%,
-    18% {
-      transform: translateX(-120%);
-    }
-    48%,
-    100% {
-      transform: translateX(120%);
-    }
-  }
-
-  @keyframes home-a {
-    50% {
-      transform: translate(2px, -2px);
-    }
-  }
-
-  @keyframes home-b {
-    50% {
-      transform: translate(-2px, 2px);
-    }
-  }
-
-  @keyframes caret-nudge {
-    50% {
-      opacity: 0.35;
-      transform: translateX(2px);
-    }
-  }
-
-  @keyframes prompt-type {
-    0%,
-    20% {
-      stroke-dashoffset: 12;
-    }
-    50%,
-    100% {
-      stroke-dashoffset: 0;
-    }
-  }
-
-  @keyframes node-pulse {
-    50% {
-      transform: scale(1.18);
-      fill: rgba(34, 211, 238, 0.18);
-    }
-  }
-
-  @keyframes edge-flow {
     to {
-      stroke-dashoffset: -14;
-    }
-  }
-
-  @keyframes bar-wave {
-    0%,
-    100% {
-      transform: scaleY(0.72);
-    }
-    50% {
-      transform: scaleY(1.12);
-    }
-  }
-
-  @keyframes dot-glow {
-    50% {
-      opacity: 0.45;
-    }
-  }
-
-  @keyframes octo-breathe {
-    50% {
-      transform: scale(1.06);
-      filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.45));
-    }
-  }
-
-  @keyframes shield-pulse {
-    50% {
-      transform: scale(1.06);
+      opacity: 1;
+      transform: none;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .sys-tile,
-    .sys-tile::after,
-    .glass__plate {
+    .frame,
+    .card,
+    .row,
+    .row::before {
+      animation: none;
       transition: none;
     }
   }

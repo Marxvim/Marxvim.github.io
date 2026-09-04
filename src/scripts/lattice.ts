@@ -7,21 +7,30 @@ const N = 4;
 const S = 1.05;
 const GAP = 1.22;
 
+/** How long a selection surge takes to cross the lattice and fade out. */
+const SURGE_SECONDS = 1.3;
+
+declare global {
+  interface WindowEventMap {
+    'marx:select': CustomEvent<{ index: number; total: number }>;
+  }
+}
+
 interface Cell {
   cell: THREE.Group;
   home: THREE.Vector3;
   line: THREE.LineSegments<THREE.EdgesGeometry, THREE.LineBasicMaterial>;
   face: THREE.Mesh<THREE.BoxGeometry, THREE.MeshBasicMaterial>;
   dir: THREE.Vector3;
-  spread: number;
   delay: number;
-  spin: THREE.Vector3;
   edgeCore: boolean;
 }
 
 /**
- * Decorative background: a lattice of wireframe cells with routing pulses that
- * travel outward through the grid. Purely presentational — the page is fully
+ * Background fabric: a lattice of wireframe cells with routing pulses travelling
+ * outward through the grid. It also answers `marx:select` from the systems
+ * console by firing a directional surge, so the background reads as the thing
+ * the interface is routing through. Purely presentational — the page is fully
  * readable if this never initialises.
  */
 class MarxLattice extends HTMLElement {
@@ -98,13 +107,7 @@ class MarxLattice extends HTMLElement {
             line,
             face,
             dir,
-            spread: 4 + Math.random() * 9,
             delay: Math.random() * 0.35,
-            spin: new THREE.Vector3(
-              (Math.random() - 0.5) * 2.2,
-              (Math.random() - 0.5) * 2.2,
-              (Math.random() - 0.5) * 2.2,
-            ),
             edgeCore: Math.abs(home.x) < GAP && Math.abs(home.y) < GAP,
           });
         }
@@ -143,12 +146,31 @@ class MarxLattice extends HTMLElement {
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+    const origin = performance.now();
+    const seconds = () => (performance.now() - origin) / 1000;
+
+    // Each system in the console owns a heading; selecting one routes the surge
+    // that way so the fabric visibly steers toward the chosen destination.
+    const surge = { at: -SURGE_SECONDS, dir: new THREE.Vector3(0, 0, 1) };
+
+    on('marx:select', (event) => {
+      const { index, total } = event.detail;
+      const angle = (index / Math.max(total, 1)) * Math.PI * 2;
+      surge.dir.set(Math.cos(angle), Math.sin(angle), 0.4).normalize();
+      surge.at = seconds();
+    });
+
     /** Routing pulses travel outward through the lattice — a switch, not a detonation. */
     const draw = (elapsed: number) => {
-      group.rotation.y = elapsed * 0.11 + pointer.x * 0.16;
+      const since = elapsed - surge.at;
+      const surging = since >= 0 && since < SURGE_SECONDS;
+      const wave = since / SURGE_SECONDS;
+      const gain = surging ? 1 - wave : 0;
+
+      group.rotation.y = elapsed * 0.11 + pointer.x * 0.16 + gain * gain * 0.2;
       group.rotation.x = Math.sin(elapsed * 0.19) * 0.2 - pointer.y * 0.1;
       group.rotation.z = Math.sin(elapsed * 0.07) * 0.09;
-      camera.position.z = 11.4;
+      camera.position.z = 11.4 - gain * 0.55;
 
       const pulseA = (elapsed * 0.42) % 1;
       const pulseB = (elapsed * 0.23 + 0.5) % 1;
@@ -158,7 +180,14 @@ class MarxLattice extends HTMLElement {
         const norm = dist / 4.4;
         const hitA = Math.exp(-(((norm - pulseA) * 6.8) ** 2));
         const hitB = Math.exp(-(((norm - pulseB) * 8.4) ** 2)) * 0.5;
-        const hit = Math.max(hitA, hitB);
+
+        // Cells facing the surge heading light hardest, so the pulse has a bearing.
+        const aim = surging ? c.dir.dot(surge.dir) * 0.5 + 0.5 : 0;
+        const hitS = surging
+          ? Math.exp(-(((norm - wave) * 5) ** 2)) * (0.4 + 0.6 * aim) * (0.5 + 0.5 * gain)
+          : 0;
+
+        const hit = Math.max(hitA, hitB, hitS);
         const drift = 0.12 * Math.sin(elapsed * 0.9 + dist * 1.3 + c.delay * 4);
 
         c.cell.position.copy(c.home).addScaledVector(c.dir, drift);
@@ -170,9 +199,6 @@ class MarxLattice extends HTMLElement {
 
       renderer.render(scene, camera);
     };
-
-    const origin = performance.now();
-    const seconds = () => (performance.now() - origin) / 1000;
 
     const tick = () => {
       this.#raf = requestAnimationFrame(tick);
